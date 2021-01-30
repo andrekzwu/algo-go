@@ -51,10 +51,10 @@ func (rbtn *RBNode) GetUncle() *RBNode {
     if rbtn.GetGrandParent() == nil {
         return nil
     }
-    if rbtn.GetGrandParent().Getleft() == rbtn {
+    if rbtn.GetGrandParent().Getleft() == rbtn.GetParent() {
         return rbtn.GetGrandParent().GetRight()
     }
-    if rbtn.GetGrandParent().GetRight() == rbtn {
+    if rbtn.GetGrandParent().GetRight() == rbtn.GetParent() {
         return rbtn.GetGrandParent().Getleft()
     }
     return nil
@@ -101,6 +101,7 @@ func (rbtn *RBNode) LeftRotate() (*RBNode, error) {
     //
     if parent == nil {
         // 如果旋转节点就是根节点，则返回新的根节点
+        right.parent = nil
         root = right
     } else {
 
@@ -110,8 +111,8 @@ func (rbtn *RBNode) LeftRotate() (*RBNode, error) {
         } else {
             parent.right = right
         }
+        right.parent = parent
     }
-
     return root, nil
 }
 
@@ -139,6 +140,7 @@ func (rbtn *RBNode) RightRotate() (*RBNode, error) {
     left.right = rbtn
     //
     if parent == nil {
+        left.parent = nil
         root = left
     } else {
         // 如果有父节点则更新父节点的子节点信息
@@ -147,6 +149,7 @@ func (rbtn *RBNode) RightRotate() (*RBNode, error) {
         } else {
             parent.left = left
         }
+        left.parent = parent
     }
     return root, nil
 }
@@ -264,7 +267,7 @@ func (rbt *RBTree) leftRotate(t *RBNode) {
 
 // rightRotate
 func (rbt *RBTree) rightRotate(t *RBNode) {
-    if root, err := t.RightRotate(); err != nil {
+    if root, err := t.RightRotate(); err == nil {
         if root != nil {
             rbt.root = root
         }
@@ -276,6 +279,11 @@ func (rbt *RBTree) rightRotate(t *RBNode) {
 // insertCheck
 func (rbt *RBTree) insertCheck(t *RBNode) {
     // 如果父节点为黑色，则不需要变动
+    if t.parent == nil {
+        t.color = BLACK
+        rbt.root = t
+        return
+    }
     if t.parent.color == BLACK {
         return
     }
