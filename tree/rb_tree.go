@@ -92,11 +92,15 @@ func (rbtn *RBNode) LeftRotate() (*RBNode, error) {
     }
     // 以某个结点作为支点(旋转结点)
     right := rbtn.right
-    // 右子结点变为旋转结点的父结点
-    rbtn.parent = right
     // 右子结点的左子结点变为旋转结点的右子结点
-    rbtn.right = right.left
+    if right.Getleft() != nil {
+        rbtn.right = right.left
+        right.left.parent = rbtn
+    } else {
+        rbtn.right = nil
+    }
     // 旋转节点成为右节点的左子节点
+    rbtn.parent = right
     right.left = rbtn
     //
     if parent == nil {
@@ -104,7 +108,6 @@ func (rbtn *RBNode) LeftRotate() (*RBNode, error) {
         right.parent = nil
         root = right
     } else {
-
         // 如果有父节点则更新父节点的子节点信息
         if isLeft {
             parent.left = right
@@ -132,11 +135,15 @@ func (rbtn *RBNode) RightRotate() (*RBNode, error) {
     }
     // 某个结点作为支点(旋转结点)
     left := rbtn.left
-    // 其右子结点变为旋转结点的父结点
-    rbtn.parent = left
     // 左子结点的右子结点变为旋转结点的左子结点
-    rbtn.left = left.right
+    if left.GetRight() != nil {
+        rbtn.left = left.right
+        left.right.parent = rbtn
+    } else {
+        rbtn.left = nil
+    }
     // 旋转接点为其左节点的右节点
+    rbtn.parent = left
     left.right = rbtn
     //
     if parent == nil {
@@ -525,18 +532,22 @@ func (rbt *RBTree) deleteCheck(t *RBNode) {
         // 兄弟节点为红色，则父节点一定为黑色，且兄弟节点有两个黑子节点
         if t.isLeft() {
             // 删除节点为左节点
-            // 旋转前兄弟节点S设置为黑色，兄弟节点的左子节点SL设置为红色
+            // 旋转前兄弟节点设置为黑色，父节点设置为红色
+            t.GetParent().color = RED
             t.GetBrother().color = BLACK
-            t.GetBrother().Getleft().color = RED
             // 以父节点为支点左旋
             rbt.leftRotate(t.GetParent())
+            // 旋转后，颜色变成，兄弟节点为黑色，父节点为红色，转换场景继续检查
+            rbt.deleteCheck(t)
         } else {
             // 删除节点为右节点
-            // 旋转前兄弟节点S设置为黑色，兄弟节点右子节点设置为红色
+            // 宣钻前兄弟节点设置为黑色，父节点设置为红色
+            t.GetParent().color = RED
             t.GetBrother().color = BLACK
-            t.GetBrother().GetRight().color = RED
             // 以父节点为支点右旋
             rbt.rightRotate(t.GetParent())
+            // 旋转后，颜色变成，兄弟节点为黑色，父节点为红色，转换场景继续检查
+            rbt.deleteCheck(t)
         }
     } else {
         // 兄弟节点为黑色，父节点颜色未知

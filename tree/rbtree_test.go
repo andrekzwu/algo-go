@@ -46,7 +46,8 @@ func TestRBTreeInsert(t *testing.T) {
 
 // TestRBTreeDelete
 func TestRBTreeDelete(t *testing.T) {
-    rbt.Delete(2)
+    rbt.LevelOrder()
+    rbt.Delete(8)
     //
     rbt.InOrder()
     rbt.LevelOrder()
