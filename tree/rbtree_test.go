@@ -1,41 +1,53 @@
 package tree
 
 import (
-    "fmt"
     "testing"
 )
 
-// TestRBTree
-func TestRBTree(t *testing.T) {
-    values := []int{5, 1, 2}
-    rbt := &RBTree{}
+var (
+    rbt *RBTree = &RBTree{}
+)
+
+// init
+func init() {
+    values := []int{5, 1, 2, 4, 8, 3}
     for _, value := range values {
         rbt.Insert(value)
     }
-    rbt.InOrder()
-    rbt.LevelOrder()
-    //
-    rbNode, ok := rbt.Query(2)
-    if ok {
-        fmt.Println("query node value is:", rbNode.value)
-        // query successor
-        successorNode := rbNode.GetSuccessor()
-        if successorNode != nil {
-            fmt.Printf("-----------%d successor is %d\n", rbNode.value, successorNode.value)
-        }
-    }
-
 }
 
-/*
-1. 删除节点如果没有子节点，则直接删除
-2. 删除节点如果只有一个节点，则用该节点进行替换，然后考虑变色与平衡
-3. 删除节点如果有两个节点，则使用期后继节点进行替换，（相当于删除后继节点），然后考虑平衡
-4. 所以最终问题，都变成了删除单个节点的情况
+// TestRBTreeSort
+func TestRBTreeSort(t *testing.T) {
+    // 前序遍历
+    rbt.PreOrder()
+    // 中序遍历
+    rbt.InOrder()
+    // 后序遍历
+    rbt.PostOrder()
+    // 层级遍历
+    rbt.LevelOrder()
+}
 
+// TestRBTreeQuery
+func TestRBTreeQuery(t *testing.T) {
+    rbNode, ok := rbt.Query(2)
+    if ok {
+        rbNode.printNode()
+    }
+}
 
+// TestRBTreeInsert
+func TestRBTreeInsert(t *testing.T) {
+    rbt.Insert(9)
+    //
+    rbt.InOrder()
+    rbt.LevelOrder()
+}
 
-
-
-
-*/
+// TestRBTreeDelete
+func TestRBTreeDelete(t *testing.T) {
+    rbt.Delete(2)
+    //
+    rbt.InOrder()
+    rbt.LevelOrder()
+}

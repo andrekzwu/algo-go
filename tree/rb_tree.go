@@ -339,7 +339,8 @@ func (rbt *RBTree) insertCheck(t *RBNode) {
 }
 
 // PreOrder
-func (rbt *RBTree) PreOrder(t *RBNode) {
+func (rbt *RBTree) PreOrder() {
+    fmt.Println("---------------前序遍历")
     rbt.preOrder(rbt.root)
     fmt.Println("")
 }
@@ -359,6 +360,7 @@ func (rbt *RBTree) preOrder(t *RBNode) {
 
 // InOrder
 func (rbt *RBTree) InOrder() {
+    fmt.Println("---------------中序遍历")
     rbt.inOrder(rbt.root)
     fmt.Println("")
 }
@@ -378,6 +380,7 @@ func (rbt *RBTree) inOrder(t *RBNode) {
 
 // PostOrder
 func (rbt *RBTree) PostOrder() {
+    fmt.Println("---------------后序遍历")
     rbt.postOrder(rbt.root)
     fmt.Println("")
 }
@@ -397,6 +400,7 @@ func (rbt *RBTree) postOrder(t *RBNode) {
 
 // LevelOrder
 func (rbt *RBTree) LevelOrder() {
+    fmt.Println("---------------层级遍历")
     if rbt.root == nil {
         return
     }
@@ -449,93 +453,6 @@ func (rbtn *RBNode) printNode() {
     fmt.Printf("[%d-%s-%s-%d] ", rbtn.GetParent().GetValue(), branch, color, rbtn.value)
 }
 
-// // Delete
-// func (rbt *RBTree) Delete(value int) bool {
-//     destNode, ok := rbt.Query(value)
-//     if !ok {
-//         return false
-//     }
-//     rbt.delete(destNode)
-//     return true
-// }
-
-// // delete
-// func (rbt *RBTree) delete(t *RBNode) {
-//     // 子节点为空 或者 为单子节点时
-//     if t.Getleft() == nil || t.GetRight() == nil {
-//         rbt.deleteSingleChild(t)
-//         return
-//     }
-//     // 左右子节点都存在，将直接后继节点的值替换删除节点
-//     successorNode := t.GetSuccessor()
-//     t.value = successorNode.value
-//     // 删除其直接后继节点
-//     rbt.deleteSingleChild(successorNode)
-// }
-
-// func (rbt *RBTree) deleteSingleChild(t *RBNode) {
-//     var child *RBNode
-//     if t.Getleft() != nil {
-//         child = t.Getleft()
-//     } else {
-//         child = t.GetRight()
-//     }
-//     // 判断是否是根节点
-//     if t.GetParent() == nil {
-//         if t.Getleft() == nil && t.GetRight() == nil {
-//             // 根节点无子树，则把根节点删除，root直接置空即可
-//             rbt.root = nil
-//         } else {
-//             // 若根节点存在一个子节点，则把子节点替换为根节点,并变色为黑色
-//             child.color = BLACK
-//             rbt.root = child
-//         }
-//         return
-//     }
-//     // 非根节点的处理逻辑
-//     //
-//     // 如果删除节点为红色，则直接把子节点设置为其父节点的子节点
-//     if t.color == RED {
-//         if t.isLeft() {
-//             t.GetParent().left = child
-//         } else {
-//             t.GetParent().right = child
-//         }
-//         if child != nil {
-//             child.parent = t.GetParent()
-//         }
-//         return
-//     }
-//     // 如果删除节点为黑色，则需要进行删除平衡检查
-//     //
-//     // 该删除节点无子孩子
-//     if child == nil {
-//         // TODO
-//     } else {
-//         if child.color == RED { // 如果子节点存在且颜色为红色，则直接让子节点替换删除节点，并把子节点设置为黑色
-//             if t.isLeft() {
-//                 t.GetParent().left = child
-//             } else {
-//                 t.GetParent().right = child
-//             }
-//             // 子节点设置为黑色
-//             child.color = BLACK
-//             child.parent = t.GetParent()
-//             return
-//         } else { // 该删除节点有子孩子，且自孩子为黑色
-//             // TODO
-
-//         }
-//     }
-
-// }
-
-// // deleteCheck
-// func (rbtn *RBNode) deleteCheck(t *RBNode) {
-//     // TODO
-//     return
-// }
-
 // Delete
 func (rbt *RBTree) Delete(value int) bool {
     // 查询节点
@@ -586,33 +503,98 @@ func (rbt *RBTree) deleteEmpty(t *RBNode) {
         return
     }
     // 删除节点为非根节点
-    //
-    // 删除节点是红色节点,则直接删除
-    if t.color == RED {
-        if t.isLeft() { // 左节点
-            t.GetParent().left = nil
-        } else { // 右节点
-            t.GetParent().right = nil
-        }
+    // 删除检查
+    rbt.deleteCheck(t)
+    if t.isLeft() {
+        t.GetParent().left = nil
+    } else {
+        t.GetParent().right = nil
+    }
+}
+
+// deleteCheck
+// 删除节点N，父节点P，兄弟节点S，兄弟节点左右子节点SL/SR
+func (rbt *RBTree) deleteCheck(t *RBNode) {
+    // 删除检查节点为根节点 或者删除检查节点为红色，无需处理直接返回
+    if t.GetParent() == nil || t.color == RED {
         return
     }
-    // 删除节点是黑色节点，需要进行旋转，变色（无子节点且为黑色，则必有兄弟节点）
+    // 删除节点为非根节点，且为黑色
     //
-    // 1.1 兄弟节点为红色
     if t.GetBrother().color == RED {
-        // 删除节点-黑色，父节点-黑色，兄弟节点-红色
-        if t.isLeft() { // 删除节点为左节点
-            // 将兄弟节点设置为黑色，父节点设置为红色
-            // TODO
-            // 以删除节点的父节点为支点进行左旋
+        // 兄弟节点为红色，则父节点一定为黑色，且兄弟节点有两个黑子节点
+        if t.isLeft() {
+            // 删除节点为左节点
+            // 旋转前兄弟节点S设置为黑色，兄弟节点的左子节点SL设置为红色
+            t.GetBrother().color = BLACK
+            t.GetBrother().Getleft().color = RED
+            // 以父节点为支点左旋
             rbt.leftRotate(t.GetParent())
-
+        } else {
+            // 删除节点为右节点
+            // 旋转前兄弟节点S设置为黑色，兄弟节点右子节点设置为红色
+            t.GetBrother().color = BLACK
+            t.GetBrother().GetRight().color = RED
+            // 以父节点为支点右旋
+            rbt.rightRotate(t.GetParent())
+        }
+    } else {
+        // 兄弟节点为黑色，父节点颜色未知
+        // 兄弟节点左右子节点不存在或都为黑色
+        if (t.GetBrother().Getleft() == nil || t.GetBrother().Getleft().color == BLACK) &&
+            (t.GetBrother().GetRight() == nil || t.GetBrother().GetRight().color == BLACK) {
+            if t.GetParent().color == RED {
+                // 父节点为红色，将兄弟节点设置为红色，父节点设置为黑色
+                t.GetParent().color = BLACK
+                t.GetBrother().color = RED
+            } else {
+                // 父节点为黑色，将兄弟节点设置为红色，保持内部平衡，删除检查转移至父节点
+                t.GetBrother().color = RED
+                rbt.insertCheck(t.GetParent())
+            }
+            return
+        }
+        if t.isLeft() { // 删除节点为左节点
+            if t.GetBrother().GetRight() != nil && t.GetBrother().GetRight().color == RED {
+                // 兄弟节点的右子节点存在且为红色
+                // 旋转前，设置兄弟节点为父节点的颜色后，父节点设置为黑色，兄弟节点的右节点设置为黑色
+                t.GetBrother().color = t.GetParent().color
+                t.GetParent().color = BLACK
+                t.GetBrother().GetRight().color = BLACK
+                // 以父节点为支点进行左旋
+                rbt.leftRotate(t.GetParent())
+            } else {
+                // 兄弟节点的左子节点存在且为红色
+                // 旋转前，将兄弟节点的左子节点的颜色设置为父节点的颜色，将父节点设置为黑色
+                t.GetBrother().Getleft().color = t.GetParent().color
+                t.GetParent().color = BLACK
+                // 先将兄弟节点作为支点右旋
+                rbt.rightRotate(t.GetBrother())
+                // 再以父节点为支点进行左旋
+                rbt.leftRotate(t.GetParent())
+            }
         } else { // 删除节点为右节点
 
+            if t.GetBrother().Getleft() != nil && t.GetBrother().Getleft().color == RED {
+                // 兄弟节点左子节点存在且为红色
+                // 旋转前，设置兄弟节点为父节点的颜色后，父节点设置为黑色，兄弟节点的左子节点设置为黑色
+                t.GetBrother().color = t.GetParent().color
+                t.GetParent().color = BLACK
+                t.GetBrother().Getleft().color = BLACK
+                // 以父节点为支点进行右旋
+                rbt.rightRotate(t.GetParent())
+            } else {
+                // 兄弟节点右子节点存在且为红色
+                // 旋转前，将兄弟节点的右子节点设置为父节点的颜色，父节点设置为黑色
+                t.GetBrother().GetRight().color = t.GetParent().color
+                t.GetParent().color = BLACK
+                // 先将兄弟节点作为支点左旋
+                rbt.leftRotate(t.GetBrother())
+                //  再以父节点为支点进行右旋
+                rbt.rightRotate(t.GetParent())
+
+                return
+            }
         }
-    }
-    // 1.2 兄弟节点为黑色
-    if t.GetBrother().color == BLACK {
-        // TODO
     }
 }
