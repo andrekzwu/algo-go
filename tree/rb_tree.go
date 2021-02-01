@@ -585,7 +585,6 @@ func (rbt *RBTree) deleteCheck(t *RBNode) {
                 rbt.leftRotate(t.GetParent())
             }
         } else { // 删除节点为右节点
-
             if t.GetBrother().Getleft() != nil && t.GetBrother().Getleft().color == RED {
                 // 兄弟节点左子节点存在且为红色
                 // 旋转前，设置兄弟节点为父节点的颜色后，父节点设置为黑色，兄弟节点的左子节点设置为黑色
@@ -603,8 +602,6 @@ func (rbt *RBTree) deleteCheck(t *RBNode) {
                 rbt.leftRotate(t.GetBrother())
                 //  再以父节点为支点进行右旋
                 rbt.rightRotate(t.GetParent())
-
-                return
             }
         }
     }
