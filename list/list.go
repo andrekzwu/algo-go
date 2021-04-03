@@ -1,111 +1,92 @@
 package list
 
-import (
-    "fmt"
-)
-
-type ListNode struct {
-    value int
-    prev  *ListNode
-    next  *ListNode
+type List_head struct {
+    prev *List_head
+    next *List_head
 }
 
-// GetValue
-func (ln *ListNode) GetValue() int {
-    if ln == nil {
-        return 0
-    }
-    return ln.value
+// __list_add
+func __list_add(new_node, prev, next *List_head) {
+    next.prev = new_node
+    new_node.next = next
+    new_node.prev = prev
+    prev.next = new_node
 }
 
-// Print
-func (ln *ListNode) Print() {
-    fmt.Printf("%d_%d_%d \n", ln.prev.GetValue(), ln.GetValue(), ln.next.GetValue())
-}
-
-// List
-type List struct {
-    head *ListNode
-}
-
-// NewList
-func NewList() *List {
-    l := &List{}
-    l.head = &ListNode{}
-    l.head.next = l.head
-    l.head.prev = l.head
-    return l
-}
-
-// Add
-func (l *List) Add(value int) {
-    if l.head == nil {
-        return
-    }
-    l.add(l.head, l.head.next, value)
-}
-
-// add
-func (l *List) add(prev, next *ListNode, value int) {
-    newNode := &ListNode{value: value}
-    //
-    next.prev = newNode
-    newNode.next = next
-    //
-    newNode.prev = prev
-    prev.next = newNode
-}
-
-// AddTail
-func (l *List) AddTail(value int) {
-    if l.head == nil {
-        return
-    }
-    l.add(l.head.prev, l.head, value)
-}
-
-// Delete
-func (l *List) Delete(value int) {
-    if l.head == nil {
-        return
-    }
-    node := l.Query(value)
-    if node == nil {
-        return
-    }
-    l.delete(node.prev, node.next)
-    node.next = nil
-    node.prev = nil
-}
-
-// delete
-func (l *List) delete(prev, next *ListNode) {
-    prev.next = next
+// __list_del
+func __list_del(prev, next *List_head) {
     next.prev = prev
+    prev.next = next
 }
 
-// Query
-func (l *List) Query(value int) *ListNode {
-    s := l.head.next
-    for l.head != s {
-        if s.value == value {
-            return s
-        }
-        s = s.next
-    }
-    return nil
+// List_head_init
+func List_head_init() *List_head {
+    head := &List_head{}
+    head.prev = head
+    head.next = head
+    return head
 }
 
-// PrintList
-func (l *List) PrintList() {
-    fmt.Println("-------------打印列表")
-    if l.head == nil {
-        return
+// Init_list_head
+func Init_list_head(head *List_head) {
+    head.prev = head
+    head.next = head
+}
+
+// List_add_head
+func List_add_head(new_node, head *List_head) {
+    __list_add(new_node, head, head.next)
+}
+
+// List_add_tail
+func List_add_tail(new_node, head *List_head) {
+    __list_add(new_node, head.prev, head)
+}
+
+// List_del
+func List_del(entry *List_head) {
+    __list_del(entry.prev, entry.next)
+    entry.prev = nil
+    entry.next = nil
+}
+
+// List_empty
+func List_empty(head *List_head) bool {
+    return head.next == head
+}
+
+// List_entry_first
+func List_entry_first(head *List_head) *List_head {
+    if head.next == head {
+        return nil
     }
-    s := l.head.next
-    for l.head != s {
-        fmt.Printf("%d ", s.value)
-        s = s.next
+    entry := head.next
+    __list_del(entry.prev, entry.next)
+    return entry
+}
+
+// List_entry_last
+func List_entry_last(head *List_head) *List_head {
+    if head.next == head {
+        return nil
     }
-    fmt.Println("")
+    entry := head.prev
+    __list_del(entry.prev, entry.next)
+    return entry
+}
+
+// List_first
+func List_first(head *List_head) *List_head {
+    if head.next == head {
+        return nil
+    }
+    return head.next
+}
+
+// List_last
+func List_last(head *List_head) *List_head {
+    if head.next == head {
+        return nil
+    }
+    return head.prev
 }

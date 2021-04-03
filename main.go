@@ -8,16 +8,26 @@ import (
 )
 
 func main() {
-    defer_call()
+    fmt.Println(maimai([]int{34, 67, 34, 96, 140, 78, 100}))
 }
 
-func defer_call() {
-    value := uint32(1)
-    defer func(x uint32) { fmt.Println("打印前", x) }(value)
-    value++
-    defer func(x uint32) { fmt.Println("打印中", x) }(value)
-    value++
-    defer func(x uint32) { fmt.Println("打印后", x) }(value)
+// zuhe
+func zuhe(arr []uint32, n uint32) {
 
-    panic("触发异常")
+}
+
+//
+func maimai(arr []int) (int, int, int) {
+    var l, r, v int
+    n := len(arr)
+    for i := 0; i < n-1; i++ {
+        for j := i + 1; j < n; j++ {
+            if arr[j]-arr[i] > v {
+                v = arr[j] - arr[i]
+                l = i
+                r = j
+            }
+        }
+    }
+    return l, r, arr[r] - arr[l]
 }
