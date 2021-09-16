@@ -5,12 +5,12 @@ import (
     "sync"
 )
 
-type StackInterface interface {
+type Stacker interface {
     Empty() bool
     Size() int
     Push(node *list.List_head)
-    Pop() (*list.List_head, bool)
-    Top() (*list.List_head, bool)
+    Pop() *list.List_head
+    Top() *list.List_head
 }
 
 type StackImpl struct {
@@ -50,30 +50,32 @@ func (si *StackImpl) Push(node *list.List_head) {
     si.mutex.Lock()
     defer si.mutex.Unlock()
     //
+    si.size++
     list.List_add_tail(node, si.stack_head)
 }
 
 // Pop
-func (si *StackImpl) Pop() (*list.List_head, bool) {
+func (si *StackImpl) Pop() *list.List_head {
     if si == nil || si.stack_head == nil {
-        return nil, false
+        return nil
     }
     si.mutex.Lock()
     defer si.mutex.Unlock()
     //
     if list.List_empty(si.stack_head) {
-        return nil, false
+        return nil
     }
-    return list.List_entry_last(si.stack_head), true
+    si.size--
+    return list.List_entry_last(si.stack_head)
 }
 
 // Pop
-func (si *StackImpl) Top() (*list.List_head, bool) {
+func (si *StackImpl) Top() *list.List_head {
     if si == nil || si.stack_head == nil {
-        return nil, false
+        return nil
     }
     if list.List_empty(si.stack_head) {
-        return nil, false
+        return nil
     }
-    return list.List_last(si.stack_head), true
+    return list.List_last(si.stack_head)
 }
