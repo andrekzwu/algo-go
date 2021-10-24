@@ -1,9 +1,7 @@
 package leetcode
 
 import (
-	"fmt"
 	"sort"
-	"strconv"
 )
 
 // -------offer 09
@@ -466,28 +464,8 @@ func maxSubArray(nums []int) int {
 
 // offer--46
 func translateNum(num int) int {
-	s := fmt.Sprintf("%d", num)
-	arrs := []byte(s)
-	//
-	checkNum :=func(a string)bool {
-		v,_ :=strconv.Atoi(a)
-		if a <= 25 {
-			return true
-		}
-		return false
-	}
-	//
-	f := make(map[int]int, 0)
-	//
-	f[0] = 1
-	//
-	for i := 1; i < len(arrs); i++ {
-		f[i] += f[i-1]
-		if i>=1 &&checkNum(string(arrs[i-1:i+1]) {
-			f[i] += f[i-2]
-		}
-	}
-	return f[i]
+	// TODO
+	return
 }
 
 // ---offer-47
