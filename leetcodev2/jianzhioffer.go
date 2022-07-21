@@ -268,3 +268,126 @@ func minArray(numbers []int) int {
 	}
 	return numbers[low]
 }
+
+// [32] 从上到下打印二叉树II
+// 回溯方法，先铺开，后收敛
+func levelOrder_S1(root *TreeNode) [][]int {
+	list := make([][]int, 0)
+	if root == nil {
+		return list
+	}
+	printLevelOrder([]*TreeNode{root}, &list)
+	return list
+}
+
+// printLevelOrder
+func printLevelOrder(nodes []*TreeNode, list *[][]int) {
+	if len(nodes) == 0 {
+		return
+	}
+	values := make([]int, 0)
+	subNodes := make([]*TreeNode, 0)
+	for _, node := range nodes {
+		values = append(values, node.Val)
+		if node.Left != nil {
+			subNodes = append(subNodes, node.Left)
+		}
+		if node.Right != nil {
+			subNodes = append(subNodes, node.Right)
+		}
+	}
+	list = append(list, values)
+	printLevelOrder(subNodes, list)
+}
+
+// levelOrder_S2
+// 使用队列的特性，先进先出，需要注意队列消耗完了的情况
+func levelOrder_S2(root *TreeNode) [][]int {
+	list := make([][]int, 0)
+	if root == nil {
+		return list
+	}
+	var values []int
+	p := []*TreeNode{root}
+	var q []*TreeNode
+	//
+	for len(p) > 0 {
+		values = append(values, p[0].Val)
+		if p[0].Left != nil {
+			q = append(q, p[0].Left)
+		}
+		if p[0].Right != nil {
+			q = append(q, p[0].Right)
+		}
+		p = p[1:]
+		if len(p) == 0 {
+			p = q
+			q = make([]*TreeNode, 0)
+			list = append(list, values)
+			values = make([]int, 0)
+		}
+	}
+	return list
+}
+
+// [32] I. 从上到下打印二叉树
+func levelOrder_V2(root *TreeNode) []int {
+	var values []int
+	if root == nil {
+		return values
+	}
+	p := []*TreeNode{root}
+	for len(p) > 0 {
+		values = append(values, p[0].Val)
+		if p[0].Left != nil {
+			p = append(p, p[0].Left)
+		}
+		if p[0].Right != nil {
+			p = append(p, p[0].Right)
+		}
+		p = p[1:]
+	}
+	return values
+}
+
+// [32]-III从上到下打印二叉树
+func levelOrder_V3(root *TreeNode) [][]int {
+	list := make([][]int, 0)
+	if root == nil {
+		return list
+	}
+	reseve := func(values []int, bReseve bool) []int {
+		if !bReseve {
+			return values
+		}
+		var reseves []int
+		for i := len(values) - 1; i >= 0; i-- {
+			reseves = append(reseves, values[i])
+		}
+		return reseves
+	}
+
+	var values []int
+	p := []*TreeNode{root}
+	var q []*TreeNode
+	bReseve := false
+	//
+	for len(p) > 0 {
+		values = append(values, p[0].Val)
+		if p[0].Left != nil {
+			q = append(q, p[0].Left)
+		}
+		if p[0].Right != nil {
+			q = append(q, p[0].Right)
+		}
+		p = p[1:]
+		if len(p) == 0 {
+			p = q
+			q = make([]*TreeNode, 0)
+			list = append(list, reseve(values, bReseve))
+			values = make([]int, 0)
+			bReseve = !bReseve
+		}
+	}
+	return list
+}

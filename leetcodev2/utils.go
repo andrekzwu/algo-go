@@ -11,6 +11,12 @@ type Node struct {
 	Random *Node
 }
 
+type TreeNode struct {
+	Val   int
+	Left  *TreeNode
+	Right *TreeNode
+}
+
 func (n *Node) val() int {
 	if n == nil {
 		return -1
