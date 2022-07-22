@@ -356,15 +356,11 @@ func levelOrder_V3(root *TreeNode) [][]int {
 	if root == nil {
 		return list
 	}
-	reseve := func(values []int, bReseve bool) []int {
-		if !bReseve {
-			return values
+	reseve := func(values []int) {
+		l := len(values)
+		for i := 0; i < len(values)/2; i++ {
+			values[i], values[l-i-1] = values[l-i-1], values[i]
 		}
-		var reseves []int
-		for i := len(values) - 1; i >= 0; i-- {
-			reseves = append(reseves, values[i])
-		}
-		return reseves
 	}
 
 	var values []int
@@ -384,7 +380,10 @@ func levelOrder_V3(root *TreeNode) [][]int {
 		if len(p) == 0 {
 			p = q
 			q = make([]*TreeNode, 0)
-			list = append(list, reseve(values, bReseve))
+			if bReseve {
+				reseve(values)
+			}
+			list = append(list, values)
 			values = make([]int, 0)
 			bReseve = !bReseve
 		}
